@@ -1,0 +1,28 @@
+<div class="container">
+                <div class="row bg-dark bg-opacity-75 p-2">
+                    <div class="col">
+                        <img src="{% static 'images/waterPump.png' %}" alt="Logo" width="50" class="p-1 d-inline-block align-text-top">
+                        <!-- <p>state: <strong><span class="badge bg-primary">""" + water_pump_state + """ </span></strong></p> -->
+                        <p>pump state: <strong><span id="pump_state" class="badge bg-primary">ON</span></strong></p>
+                    </div>
+
+                    <div class="col d-flex justify-content-center align-items-center">
+                        <a class="btn btn-orange" href="#">ON</a>
+                    </div>
+                    
+                </div>
+                <br>
+
+                <div class="row bg-dark bg-opacity-75 p-2">
+                    <div class="col">
+                        <img src="{% static 'images/alarm1.png' %}" alt="Logo" width="50" class="p-1 d-inline-block align-text-top">
+                        <p>Alarm state: <strong><span id="alarm_state" class="badge bg-danger">ON</span></strong></p>
+                    </div>
+
+                    <div class="col d-flex justify-content-center align-items-center">
+                        <a class="btn btn-orange" href="">ON</a>
+                    </div>
+                    
+                </div>
+                
+            </div>

@@ -1,0 +1,194 @@
+{% extends 'main.html'%}
+{% load static %}
+
+{% block content1 %}
+
+
+    <div id="demo1"></div>
+
+    <!-- Background image -->
+    <div class="bg-image justify-content-center align-items-center pt-4" style="background-image: url('static/images/background1.jpg');height: 120vh; background-repeat: no-repeat; background-size: cover; background-attachment: scroll; background-position: center; ">
+        <div class="container text-white"> 
+            <h2 class="text-center bg-primary bg-opacity-50">Synavos IOT</h2>
+            <h2 class="text-center">water tank level indicator</h2>
+                
+            <table class="bg-dark bg-opacity-75 table-bordered m-auto">
+                <caption>Level indicator</caption>
+                <tr class="text-center">
+                    <th>Water level (cm)</th>
+                    <th>Water level (%)</th>
+                    <th>Water </th>
+                </tr>
+                <tr class="text-center">
+                    <td id="water_level_cm">""" + str(distance[0]) + """ cm</td>
+                    <td id="water_level_%">""" + str(distance[1]) + """ %</td>
+                    <td id="water_quantity">""" + str(distance[2]) + """ liter</td>
+                </tr>
+            </table>
+            
+            
+            
+            <!-- graphical indicator -->
+            <div class="container bg-dark bg-opacity-75">
+
+                  <div class="row py-4">
+                    <!-- water tank -->
+                    <div class="col-4 d-flex justify-content-center align-items-center">
+                        <div class="content">
+                            <div class="d-flex justify-content-center">
+                                <div class="border" style="height:200px;width:102px;">
+                                    <!-- <p class="text-center" style="font-size:13px;margin-top:100%;margin-bottom:0px;">100%</p> -->
+                                    <div id="wl_empty" class="" style="height:0%;width:100px;"></div>
+                                    <div id="wl_fill" class="bg-primary" style="height:0%;width:100px;">
+                                        <p id="wl_info" class="text-center">20%</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- auto or manual -->
+                            <span>Auto</span>
+                            <span class="form-switch">
+                                <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" >
+                                <!-- checked="" -->
+                            </span>
+                            <span>Manual</span>    
+                        </div>
+                    </div>
+
+                    <!-- Status -->
+                    <div class="col-4 align-items-center">
+                        <div class="content">
+
+                            <!-- water pump state -->
+                            <div class="row bg-dark bg-opacity-75 p-2">
+                                <div class="col-6">
+                                    <img src="{% static 'images/waterPump.png' %}" alt="Logo" width="50" class="p-1 d-inline-block align-text-top">
+                                    <!-- <p>state: <strong><span class="badge bg-primary">""" + water_pump_state + """ </span></strong></p> -->
+                                    <p>pump state: <strong><span id="pump_state" class="badge bg-primary">ON</span></strong></p>
+                                </div>
+            
+                                <div class="col-6 d-flex justify-content-center align-items-center">
+                                    <input class="btn btn-orange" type="button" id="waterPumpBtn" value="OFF" onclick="tgl();">
+                                </div>
+                                
+                            </div>
+                            <br>
+                            <!-- alarm state -->
+                            <div class="row bg-dark bg-opacity-75 p-2">
+                                <div class="col">
+                                    <img src="{% static 'images/alarm1.png' %}" alt="Logo" width="50" class="p-1 d-inline-block align-text-top">
+                                    <p>Alarm state: <strong><span id="alarm_state" class="badge bg-danger">ON</span></strong></p>
+                                </div>
+            
+                                <div class="col d-flex justify-content-center align-items-center">
+                                    <a class="btn btn-orange" href="">ON</a>
+                                </div>
+                                
+                            </div>
+                            
+                        </div>
+                        
+                    </div>
+                    
+                    <!-- Medicine tank -->
+                    <div class="col-4 d-flex justify-content-center align-items-center">
+                        <div class="content">
+                            <div class="d-flex justify-content-center">
+                                <div class="border" style="height:100px;width:52px;">
+                                    <p style="font-size:13px;margin-top:0px;margin-bottom:0px;">20%</p>
+                                    <div class="bg-danger" style="height:80%;width:50px"></div>
+                                </div>    
+                            </div>
+                            
+                            <span>Auto</span>
+                            <span class="form-switch">
+                                <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" >
+                                <!-- checked="" -->
+                            </span>
+                            <span>Manual</span>
+                            
+                        </div>
+                        
+                    </div>
+
+                </div>
+            </div>
+            <br>
+        </div>
+    </div>
+
+        
+
+
+
+
+
+    <script>
+        function startLiveUpdate(){
+            const textViewCount = document.getElementById('viewCount');
+
+            setInterval(function(){
+                
+                $.ajax({
+                    type:'Get',
+                    url:'/new',
+                    success: function(response){
+
+                        // response is string type
+                        object = JSON.parse(response);
+                        // console.log(object["water_level"]);
+                        // console.log(typeof object);
+                        document.getElementById("water_level_cm").innerHTML = object["sensor_reading"]["water_lvl_cm"];
+                        document.getElementById("water_level_%").innerHTML = object["sensor_reading"]["water_lvl_pct"];
+                        document.getElementById("water_quantity").innerHTML = object["sensor_reading"]["water_vol_ltr"];
+
+                        
+                        // document.getElementById("wl_fill").style.height = "100%";
+                        document.getElementById("wl_fill").style.height = String(object["sensor_reading"]["water_lvl_pct"] + '%');
+                        document.getElementById("wl_empty").style.height = String((100-object["sensor_reading"]["water_lvl_pct"]) + '%');
+                        // document.getElementById("wl_info").innerHTML = "info";
+                        document.getElementById("wl_info").textContent = String((object["sensor_reading"]["water_lvl_pct"]) + '%');
+
+                        document.getElementById("pump_state").textContent = object["water_pump"];
+                        document.getElementById("alarm_state").textContent = object["alarm"];
+                    }
+                    
+                });
+
+            }, 5000);
+
+        }
+
+        document.addEventListener('DOMContentLoaded', function(){
+
+        startLiveUpdate();
+        });
+
+
+        function tgl()
+        {
+        var t = document.getElementById("waterPumpBtn");
+        if(t.value=="ON"){
+            t.value="OFF";}
+        else if(t.value=="OFF"){
+            t.value="ON";}
+
+
+            $.ajax({
+                type: "POST",
+                url:'/control',
+                data: { csrfmiddlewaretoken: '{{ csrf_token }}', waterPumpBtnValue: t.value },
+                success: function callback(response){
+                           /* do whatever with the response */
+                           alert(response);
+                        }
+            });
+
+        }
+
+
+
+    </script>
+
+
+{% endblock content1 %}
